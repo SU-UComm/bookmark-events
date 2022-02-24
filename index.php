@@ -19,7 +19,7 @@
 </head>
 
 <body class="content-page">
-<?php //include '../v5/includes/header.html'; ?>
+<?php include '../v5/includes/header.html'; ?>
 
 <!-- main content -->
 <section id="main-content"  role="main">
@@ -27,9 +27,9 @@
 
     <?php
     if ( !empty( $_POST ) ) {
-      echo "<code>\n";
-      printf( $_POST );
-      echo "</code>\n";
+      echo "<code><pre>\n";
+      print_r( $_POST );
+      echo "</pre></code>\n";
     }
     ?>
 
