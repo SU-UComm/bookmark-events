@@ -1,6 +1,6 @@
 <?php
 
-namespace Stanford\EventDataMigrate;
+namespace Stanford\EventBookmark;
 
 class DB {
 
