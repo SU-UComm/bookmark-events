@@ -1,13 +1,13 @@
 <?php
 
-namespace Stanford\EventDataMigrate;
+namespace Stanford\EventBookmark;
 
 class Localist {
 
   /** @const string CONF_FILE - file name containing DB credentials */
   const CONF_FILE = './conf.json';
 
-  const API_ROOT = 'https://stanford.enterprise.localist.com/api/2/';
+  const API_ROOT = 'https://events.stanford.edu/api/2/';
 
   /** @var DB $instance - singleton instance of the class **/
   private static $instance;
@@ -16,7 +16,7 @@ class Localist {
   private $token;
 
 
-  public function auth_api_call( $request, $method = 'GET', $params = '', $data = '' ) {
+  public function auth_api_call( $request, $params = '' ) {
     $url = self::API_ROOT . $request;
     if ( !empty( $params ) ) {
       $url .= '?' . http_build_query( $params );
@@ -27,19 +27,13 @@ class Localist {
     ];
 
     $ch = curl_init( $url );
-    switch ( $method ) {
-      case 'POST':
-        $payload = json_encode( $data );
-        $headers[] = 'Content-Length: ' . strlen( $payload) ;
-        curl_setopt($ch, CURLOPT_POST, true);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, $payload);
-        break;
-    }
     curl_setopt($ch, CURLOPT_URL, $url);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
     curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
 
+    // echo "Curling {$url}\n"; // DEBUG
     $response = curl_exec( $ch );
+    // echo "Response:\n"; printf( $response ); echo "\n"; // DEBUG
     curl_close( $ch );
 
     return json_decode( $response );
@@ -54,7 +48,7 @@ class Localist {
   }
 
   /**
-   * @return Events singleton instance
+   * @return Localist singleton instance
    */
   public static function init() {
     if ( !is_a( self::$instance, __CLASS__ ) ) {
