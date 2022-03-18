@@ -7,17 +7,28 @@ class Localist {
   /** @const string CONF_FILE - file name containing DB credentials */
   const CONF_FILE = './conf.json';
 
-  const API_ROOT = 'https://events.stanford.edu/api/2/';
+  private $api_root;
 
-  /** @var DB $instance - singleton instance of the class **/
+  /** @var Feed $instance - singleton instance of the class **/
   private static $instance;
 
   /** @var string $token - access token to allow authenticated access to Localist */
   private $token;
 
 
+  public function get_user( int $uid ) {
+    return $this->auth_api_call( "users/{$uid}" );
+  }
+
+  public function get_event( int $event_id ) {
+    $event = $this->auth_api_call( "events/{$event_id}" );
+    echo "/nLocalist->get_event( {$event_id} ):\n";
+    echo htmlentities( print_r( $event ) );
+    return $event;
+  }
+
   public function auth_api_call( $request, $params = '' ) {
-    $url = self::API_ROOT . $request;
+    $url = $this->api_root . $request;
     if ( !empty( $params ) ) {
       $url .= '?' . http_build_query( $params );
     }
@@ -39,28 +50,43 @@ class Localist {
     return json_decode( $response );
   }
 
-  /**
-   * Create singleton instance.
-   * private to enforce singleton pattern
-   */
-  private function __construct() {
-    $this->load_config();
-  }
+  /***********************/
+  /***** Class Setup *****/
+  /***********************/
 
   /**
+   * Initialize singleton instance
+   *
+   * @param string $env - 'live' or 'staging'
    * @return Localist singleton instance
    */
-  public static function init() {
+  public static function init( string $env = 'live' ) {
     if ( !is_a( self::$instance, __CLASS__ ) ) {
-      self::$instance = new Localist();
+      self::$instance = new Localist( $env );
     }
     return self::$instance;
   }
 
   /**
-   * Load the db credentials from the configuration file
+   * Construct instance
+   * private to enforce singleton pattern
+   *
+   * @param string $env - 'live' or 'staging'
    */
-  protected function load_config() {
+  private function __construct( string $env ) {
+    $this->api_root = $env == 'live'
+      ? 'https://events.stanford.edu/api/2/'
+      : 'https://stanford.staging.localist.com/api/2/';
+    // get access token for authorized access to Localist
+    $this->load_config( $env );
+  }
+
+  /**
+   * Load the API access token from the configuration file
+   *
+   * @param string $env - 'live' or 'staging'
+   */
+  protected function load_config( $env ) {
     try {
       $config = file_get_contents( self::CONF_FILE );
     }
@@ -70,7 +96,9 @@ class Localist {
       die();
     }
     $conf = \json_decode( $config );
-    $this->token = $conf->LOCALIST_ACCESS_TOKEN;
+    $this->token = $env == 'live'
+      ? $conf->LOCALIST_ACCESS_TOKEN_LIVE
+      : $conf->LOCALIST_ACCESS_TOKEN_STAG;
   }
 
 }

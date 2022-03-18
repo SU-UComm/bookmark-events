@@ -65,7 +65,7 @@ class DB {
 
     try {
       $this->mysqli = new \mysqli( $this->db_host, $this->db_user, $this->db_pw, $this->db_schema, $this->db_port );
-      printf( "Success: Connected to %s\n", $this->mysqli->host_info );
+      //printf( "Success: Connected to %s\n", $this->mysqli->host_info );
     } catch ( \Exception $e ) {
       echo "ERROR: ",  $e->getMessage(),       "\n";
       echo "TRACE:\n", $e->getTraceAsString(), "\n";

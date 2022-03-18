@@ -5,17 +5,29 @@ namespace Stanford\EventBookmark;
 
 include_once "Localist.php";
 
-$opts     = getopt( 'r:i:h', [] );
+$opts     = getopt( 'e:r:i:h', [] );
+$env      = isset( $opts[ 'e' ] ) ? $opts[ 'e' ] : 'staging';
 $resource = isset( $opts[ 'r' ] ) ? $opts[ 'r' ] : 'user';
 $ids      = isset( $opts[ 'i' ] ) ? $opts[ 'i' ] : '';
 
 if ( isset( $opts[ 'h' ] ) ) {
   echo "Usage:\n";
-  echo "  -r resource - what resource to retrieve from Localist, e.g. user, department, place. Defaults to user.\n";
+  echo "  -e environment - 'live' or 'staging'. Defaults to staging.\n";
+  echo "  -r resource - what resource to retrieve from Localist, e.g. user, event, department, place. Defaults to user.\n";
   echo "  -i ids - comma separated list of specific ids to retrieve. If not specified, gets the first 10.\n";
+  die();
 }
 
-$localist = Localist::init();
+$localist = Localist::init( $env );
+
+switch ( $resource ) {
+  case 'user':
+    $method = 'get_user';
+    break;
+  case 'event':
+    $method = 'get_event';
+    break;
+}
 
 if ( empty( $ids ) ) {
   echo "Fetching 10 {$resource}s\n";
@@ -24,7 +36,11 @@ if ( empty( $ids ) ) {
 } else {
   foreach ( explode( ',', $ids ) as $id ) {
     echo "Fetching {$resource} {$id}\n";
-    $results = $localist->auth_api_call( "{$resource}s/{$id}" );
+    if ( isset( $method ) ) {
+      $results = call_user_func( [$localist, $method ], $id );
+    } else {
+      $results = $localist->auth_api_call( "{$resource}s/{$id}" );
+    }
     print_r( $results );
     echo "\n";
   }
