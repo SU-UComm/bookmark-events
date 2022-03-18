@@ -17,14 +17,17 @@ class Localist {
 
 
   public function get_user( int $uid ) {
-    return $this->auth_api_call( "users/{$uid}" );
+    result = $this->auth_api_call( "users/{$uid}" );
+    echo "/nLocalist->get_user( {$uid} ):\n";
+    echo htmlentities( print_r( $result, TRUE ) );
+    return $result;
   }
 
   public function get_event( int $event_id ) {
-    $event = $this->auth_api_call( "events/{$event_id}" );
-    echo "/nLocalist->get_event( {$event_id} ):\n";
-    echo htmlentities( print_r( $event ) );
-    return $event;
+    $result = $this->auth_api_call( "events/{$event_id}" );
+    //echo "/nLocalist->get_event( {$event_id} ):\n";
+    //echo htmlentities( print_r( $result, TRUE ) );
+    return $result->event;
   }
 
   public function auth_api_call( $request, $params = '' ) {

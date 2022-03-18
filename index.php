@@ -10,6 +10,7 @@ if ( !empty( $_POST ) ) {
   $feed     = Feed::init( $db );
   $feeds    = $feed->get_user_feeds( $_POST[ 'userId' ] );
   $localist = Localist::init( 'staging' ); //// TODO: change to 'live'
+  $user     = $localist->get_user(  $_POST[ 'userId'  ] );
   $event    = $localist->get_event( $_POST[ 'eventId' ] );
 }
 ?>
@@ -56,10 +57,21 @@ if ( !empty( $_POST ) ) {
       </pre>
     </code>
 
-    <h2>$event</h2>
+<!--
+    <h2>$user</h2>
+    <p>$user is type <?php echo gettype( $user ); ?></p>
     <code>
       <pre>
-        <?php print_r( htmlentities( $event ) ); ?>
+        <?php echo htmlentities(  print_r( $user, TRUE ) ); ?>
+      </pre>
+    </code>
+-->
+
+    <h2>$event</h2>
+    <p>$event is type <?php echo gettype( $event ); ?></p>
+    <code>
+      <pre>
+        <?php echo htmlentities(  print_r( $event, TRUE ) ); ?>
       </pre>
     </code>
 
