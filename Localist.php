@@ -17,7 +17,7 @@ class Localist {
 
 
   public function get_user( int $uid ) {
-    result = $this->auth_api_call( "users/{$uid}" );
+    $result = $this->auth_api_call( "users/{$uid}" );
     echo "/nLocalist->get_user( {$uid} ):\n";
     echo htmlentities( print_r( $result, TRUE ) );
     return $result;
