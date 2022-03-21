@@ -6,12 +6,13 @@ include_once 'Feed.php';
 include_once 'Localist.php';
 
 if ( !empty( $_POST ) ) {
-  $db       = DB::get_instance();
-  $feed     = Feed::init( $db );
-  $feeds    = $feed->get_user_feeds( $_POST[ 'userId' ] );
-  $localist = Localist::init( 'staging' ); //// TODO: change to 'live'
-  $user     = $localist->get_user(  $_POST[ 'userId'  ] );
-  $event    = $localist->get_event( $_POST[ 'eventId' ] );
+  $db        = DB::get_instance();
+  $feed      = Feed::init( $db );
+  $feeds     = $feed->get_user_feeds( $_POST[ 'userId' ] );
+  $num_feeds = count( $feeds );
+  $localist  = Localist::init( 'staging' ); //// TODO: change to 'live'
+  $user      = $localist->get_user(  $_POST[ 'userId'  ] );
+  $event     = $localist->get_event( $_POST[ 'eventId' ] );
 }
 ?>
 <!DOCTYPE html>
@@ -32,6 +33,12 @@ if ( !empty( $_POST ) ) {
   <meta name="description" content="Bookmark Localist events." />
 
   <?php include '../v5/includes/head.html'; ?>
+  <style>
+    input[type="radio"] {
+      margin-bottom: 1em;
+      margin-right:  0.5em;
+    }
+  </style>
 </head>
 
 <body class="content-page">
@@ -43,45 +50,66 @@ if ( !empty( $_POST ) ) {
     <h1>Bookmark a Localist event</h1>
 
 <?php if ( !empty( $_POST ) ) { ?>
+<!--
     <h2>$_POST</h2>
     <code>
       <pre>
         <?php print_r( $_POST ); ?>
       </pre>
     </code>
-
+-->
+<!--
+    <h2>$_SERVER</h2>
+    <code>
+      <pre>
+        <?php print_r( $_SERVER ); ?>
+      </pre>
+    </code>
+-->
+<!--
     <h2>$feeds</h2>
     <code>
       <pre>
         <?php print_r( $feeds ); ?>
       </pre>
     </code>
-
+-->
 <!--
     <h2>$user</h2>
-    <p>$user is type <?php echo gettype( $user ); ?></p>
     <code>
       <pre>
         <?php echo htmlentities(  print_r( $user, TRUE ) ); ?>
       </pre>
     </code>
 -->
-
+<!--
     <h2>$event</h2>
-    <p>$event is type <?php echo gettype( $event ); ?></p>
     <code>
       <pre>
         <?php echo htmlentities(  print_r( $event, TRUE ) ); ?>
       </pre>
     </code>
+-->
 
-    <h2>Select feed</h2>
+    <h2>Add to feed</h2>
     <p>
-      Which feed would you like to include
-      <a href="<?php echo $event->localist_url; ?>"><?php echo $event->title; ?></a>
-      in?
+      Add <a href="<?php echo $event->localist_url; ?>"><?php echo $event->title; ?></a> to:
     </p>
     <form id="bookmark-form" method="post">
+      <?php if ( $num_feeds <= 1 ) { ?>
+        <input name="feed-name" type="text"   value=<?php echo $feeds[0]->name; ?> disabled />
+        <input name="feed"      type="hidden" value=<?php echo $feeds[0]->slug; ?> />
+      <?php } elseif ( $num_feeds <= 5 ) { ?>
+        <?php foreach ( $feeds as $feed ) { ?>
+	  <input name="feed" type="radio" value=<?php echo $feed->slug; ?> />&nbsp;&nbsp;<?php echo $feed->name; ?></br>
+        <?php } ?>
+      <?php } else { ?>
+        <select name="feed">
+        <?php foreach ( $feeds as $feed ) { ?>
+	  <option value=<?php echo $feed->slug; ?>/><?php echo $feed->name; ?></option>
+        <?php } ?>
+	</select>
+      <?php } ?>
       <input type="submit" value="Submit">
     </form>
 <?php } else { ?>
