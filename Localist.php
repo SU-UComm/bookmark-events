@@ -18,16 +18,16 @@ class Localist {
 
   public function get_user( int $uid ) {
     $result = $this->auth_api_call( "users/{$uid}" );
-    echo "/nLocalist->get_user( {$uid} ):\n";
-    echo htmlentities( print_r( $result, TRUE ) );
-    return $result;
+    //echo "/nLocalist->get_user( {$uid} ):\n";
+    //echo htmlentities( print_r( $result, TRUE ) );
+    return isset( $result->user) ? $result->user : FALSE;
   }
 
   public function get_event( int $event_id ) {
     $result = $this->auth_api_call( "events/{$event_id}" );
     //echo "/nLocalist->get_event( {$event_id} ):\n";
     //echo htmlentities( print_r( $result, TRUE ) );
-    return $result->event;
+    return isset( $result->event ) ? $result->event : FALSE;
   }
 
   public function auth_api_call( $request, $params = '' ) {
