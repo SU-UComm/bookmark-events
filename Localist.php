@@ -48,6 +48,11 @@ class Localist {
     // echo "Curling {$url}\n"; // DEBUG
     $response = curl_exec( $ch );
     // echo "Response:\n"; printf( $response ); echo "\n"; // DEBUG
+    if ( $response === FALSE ) {
+      echo "ERROR: Failed to get a response from {$url}<br/>\n";
+      echo curl_error( $ch );
+      return FALSE;
+    }
     curl_close( $ch );
 
     return json_decode( $response );
