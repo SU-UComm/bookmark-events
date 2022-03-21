@@ -19,8 +19,9 @@ class Feed {
    */
   public function get_user_feeds( $uid ) {
     $query = <<<EOQUERY
-SELECT uf.*
+SELECT uf.*, f.slug, f.name
   FROM localist_bkmk_user_feed AS uf
+  LEFT JOIN localist_bkmk_feed as f ON uf.feed_id=f.id
   WHERE uf.user_id = {$uid};
 EOQUERY;
 
