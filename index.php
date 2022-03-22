@@ -50,63 +50,64 @@ if ( !empty( $_POST ) ) {
     <h1>Bookmark a Localist event</h1>
 
 <?php if ( !empty( $_POST ) ) { ?>
-<!--
+<!-- --
     <h2>$_POST</h2>
     <code>
       <pre>
         <?php print_r( $_POST ); ?>
       </pre>
     </code>
--->
-<!--
+<!-- -->
+<!-- --
     <h2>$_SERVER</h2>
     <code>
       <pre>
         <?php print_r( $_SERVER ); ?>
       </pre>
     </code>
--->
-<!--
+<!-- -->
+<!-- --
     <h2>$feeds</h2>
     <code>
       <pre>
         <?php print_r( $feeds ); ?>
       </pre>
     </code>
--->
-<!--
-    <h2>$user</h2>
+<!-- -->
+<!-- --
+<h2>$user</h2>
     <code>
       <pre>
         <?php echo htmlentities(  print_r( $user, TRUE ) ); ?>
       </pre>
     </code>
--->
-<!--
+<-- -->
+<!-- --
     <h2>$event</h2>
     <code>
       <pre>
         <?php echo htmlentities(  print_r( $event, TRUE ) ); ?>
       </pre>
     </code>
--->
+<!-- -->
 
     <h2>Add to feed</h2>
     <p>
       Add <a href="<?php echo $event->localist_url; ?>"><?php echo $event->title; ?></a> to:
     </p>
-    <form id="bookmark-form" method="post">
+    <form id="bookmark-form" method="post" action="/bookmark/bookmark.php">
+      <input name="eventId" type="hidden" value="<?php echo $_POST[ 'eventId' ]; ?>">
       <?php if ( $num_feeds <= 1 ) { ?>
         <input name="feed-name" type="text"   value=<?php echo $feeds[0]->name; ?> disabled />
-        <input name="feed"      type="hidden" value=<?php echo $feeds[0]->slug; ?> />
+        <input name="feedId"    type="hidden" value=<?php echo $feeds[0]->feed_id; ?> />
       <?php } elseif ( $num_feeds <= 5 ) { ?>
         <?php foreach ( $feeds as $feed ) { ?>
-	  <input name="feed" type="radio" value=<?php echo $feed->slug; ?> />&nbsp;&nbsp;<?php echo $feed->name; ?></br>
+	  <input name="feedId" type="radio" value=<?php echo $feed->feed_id; ?> />&nbsp;&nbsp;<?php echo $feed->name; ?></br>
         <?php } ?>
       <?php } else { ?>
         <select name="feed">
         <?php foreach ( $feeds as $feed ) { ?>
-	  <option value=<?php echo $feed->slug; ?>/><?php echo $feed->name; ?></option>
+	  <option value=<?php echo $feed->feed_id; ?>/><?php echo $feed->name; ?></option>
         <?php } ?>
 	</select>
       <?php } ?>
