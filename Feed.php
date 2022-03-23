@@ -28,19 +28,11 @@ SELECT uf.*, f.slug, f.name
 EOQUERY;
 
     $result = $this->db->query( $query, MYSQLI_USE_RESULT );
-/*** ***
-    echo "\nget_feeds( {$uid} ):\n"; //// DEBUG
-    echo "Result (" . get_class( $result ) . "):\n"; //// DEBUG
-    print_r( $result ); //// DEBUG
-/*** ***/
     $feeds = [];
     while ( $feed = $result->fetch_object() ) {
       $feeds[] = $feed;
     }
-/*** ***
-    echo "Feeds for {$uid}:\n"; //// DEBUG
-    print_r( $feeds ); //// DEBUG
-/*** ***/
+    $result->close();
     return $feeds;
   }
 
@@ -59,18 +51,8 @@ SELECT *
     AND event_id={$eventId};
 EOQUERY1;
     $result1 = $this->db->query( $query1, MYSQLI_USE_RESULT );
-/*** ***/
-    echo "\nadd_event_to_feed( {$eventId}, {$feedId} ):\n"; //// DEBUG
-    echo "Result (" . get_class( $result1 ) . "):\n"; //// DEBUG
-    print_r( $result1 ); //// DEBUG
-    echo "<hr/>";
-/*** ***/
     $row = $result1->fetch_object();
-/*** ***/
-    echo "Row (" . get_class( $row ) . "):\n"; //// DEBUG
-    print_r( $row ); //// DEBUG
-    echo "<hr/>";
-/*** ***/
+    $result1->close();
     if ( $row ) {
       return FALSE;
     }
@@ -81,43 +63,49 @@ INSERT INTO localist_bkmk_feed_events
   VALUES ( {$feedId}, {$eventId} );
 EOQUERY2;
     $result2 = $this->db->query( $query2, MYSQLI_USE_RESULT );
-/*** ***/
-    echo "\nadd_event_to_feed( {$eventId}, {$feedId} ):\n"; //// DEBUG
-    echo "Result (" . get_class( $result2 ) . "):\n"; //// DEBUG
-    print_r( $result2 ); //// DEBUG
-/*** ***/
     return TRUE;
   }
 
   /***
    * Get details about a specific feed
    *
+   * @param int | string $feed - feed id (int) or slug (string)
+   * @return stdClass - feed
+   */
+  public function get_feed( $feed ) {
+
+    $query  = "SELECT * FROM localist_bkmk_feed WHERE ";
+    $query .= is_numeric( $feed )
+      ? "id = '{$feed}';"
+      : "slug = '{$feed}';";
+
+    $result = $this->db->query( $query, MYSQLI_USE_RESULT );
+    $feed = $result->fetch_object();
+    $result->close();
+    return $feed;
+  }
+
+  /***
+   * Get events in a specific feed
+   *
    * @param int $feedId - feed id
    * @return stdClass - feed
    */
-  public function get_feed( $feedId ) {
+  public function get_feed_events( $feedId ) {
 
     $query = <<<EOQUERY
-SELECT f.*
-  FROM localist_bkmk_feed AS f
-  WHERE f.id = {$feedId};
+SELECT fe.*
+  FROM localist_bkmk_feed_events AS fe
+  WHERE fe.feed_id = '{$feedId}';
 EOQUERY;
 
     $result = $this->db->query( $query, MYSQLI_USE_RESULT );
-/*** ***
-    echo "\nget_feed( {$feedId} ):\n"; //// DEBUG
-    echo "Result (" . get_class( $result ) . "):\n"; //// DEBUG
-    print_r( $result ); //// DEBUG
-    echo "<hr/>\n";
-/*** ***/
 
-    $feed = $result->fetch_object();
-/*** ***
-    echo "Feed {$feedId}:\n"; //// DEBUG
-    print_r( $feed ); //// DEBUG
-    echo "<hr/>\n";
-/*** ***/
-    return $feed;
+    $events = [];
+    while ( $event = $result->fetch_object() ) {
+      $events[] = $event->event_id;
+    }
+    return $events;
   }
 
   /***********************/
@@ -127,6 +115,7 @@ EOQUERY;
   /**
    * Return singleton instance of the class
    *
+   * @param DB $db - connection to database
    * @return Feed
    */
   static public function init( DB $db) {
@@ -138,6 +127,8 @@ EOQUERY;
 
   /**
    * Build the singleton instance of the class.
+   *
+   * @param DB $db - connection to database
    */
   private function __construct( $db = NULL ) {
     if ( is_a( $db, 'DB' ) ) {
