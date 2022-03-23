@@ -12,7 +12,6 @@ if ( !empty( $_POST ) ) {
   $event     = $localist->get_event( $_POST[ 'eventId' ] );
   $feeder    = Feed::init( $db );
   $feed      = $feeder->get_feed( $_POST[ 'feedId' ] );
-
   $added     = $feeder->add_event_to_feed( $_POST[ 'eventId' ], $_POST[ 'feedId' ] );
 }
 $debug = ob_get_contents();
@@ -52,6 +51,9 @@ ob_end_clean();
       <?php } else { ?>
       is already in <?php echo $feed->name; ?>.
       <?php } ?>
+    </p>
+    <p>
+      <a href="/bookmark/feed.php?slug=<?php echo $feed->slug; ?>">View the feed.</a>
     </p>
     <section id="debug">
       <code>
