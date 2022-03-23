@@ -59,14 +59,6 @@ if ( !empty( $_POST ) ) {
     </code>
 <!-- -->
 <!-- --
-    <h2>$_SERVER</h2>
-    <code>
-      <pre>
-        <?php print_r( $_SERVER ); ?>
-      </pre>
-    </code>
-<!-- -->
-<!-- --
     <h2>$feeds</h2>
     <code>
       <pre>
@@ -98,16 +90,15 @@ if ( !empty( $_POST ) ) {
     <form id="bookmark-form" method="post" action="/bookmark/bookmark.php">
       <input name="eventId" type="hidden" value="<?php echo $_POST[ 'eventId' ]; ?>">
       <?php if ( $num_feeds <= 1 ) { ?>
-        <input name="feed-name" type="text"   value=<?php echo $feeds[0]->name; ?> disabled />
-        <input name="feedId"    type="hidden" value=<?php echo $feeds[0]->feed_id; ?> />
+	<input name="feedId" type="radio" value="<?php echo $feeds[0]->feed_id; ?>" checked />&nbsp;&nbsp;<?php echo $feeds[0]->name; ?></br>
       <?php } elseif ( $num_feeds <= 5 ) { ?>
         <?php foreach ( $feeds as $feed ) { ?>
-	  <input name="feedId" type="radio" value=<?php echo $feed->feed_id; ?> />&nbsp;&nbsp;<?php echo $feed->name; ?></br>
+	  <input name="feedId" type="radio" value="<?php echo $feed->feed_id; ?>" />&nbsp;&nbsp;<?php echo $feed->name; ?></br>
         <?php } ?>
       <?php } else { ?>
         <select name="feed">
         <?php foreach ( $feeds as $feed ) { ?>
-	  <option value=<?php echo $feed->feed_id; ?>/><?php echo $feed->name; ?></option>
+	  <option value="<?php echo $feed->feed_id; ?>"/><?php echo $feed->name; ?></option>
         <?php } ?>
 	</select>
       <?php } ?>
