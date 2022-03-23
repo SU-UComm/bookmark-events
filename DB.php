@@ -32,7 +32,15 @@ class DB {
    * @return bool|\mysqli_result
    */
   public function query( string $query, int $result_mode = MYSQLI_USE_RESULT ) {
-    return $this->mysqli->query( $query, $result_mode );
+    try {
+      return $this->mysqli->query( $query, $result_mode );
+    }
+    catch ( \Exception $e ) {
+      echo "DB::query: {$query}<br/>\n";
+      echo "ERROR: ",  $e->getMessage(), "\n";
+      echo "TRACE:\n", $e->getTraceAsString(), "\n";
+      die();
+    }
   }
 
   /***********************/
