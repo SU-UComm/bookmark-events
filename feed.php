@@ -22,9 +22,20 @@ $event_ids = $feeder->get_feed_events( $feed->id );
 $data = new \stdClass;
 $data->events = [];
 foreach ( $event_ids as $event_id ) {
-  $eventObj        = new \stdClass;
-  $eventObj->event = $localist->get_event( $event_id );  
-  $data->events[]  = $eventObj;
+  $eventObj = new \stdClass;
+  $event    = $localist->get_event( $event_id );
+  if ( strtolower( $event->recurring != 'true' ) ) { // non-recurring event
+    $eventObj->event = $event;
+    $data->events[]  = $eventObj;
+  }
+  else { // recurring event
+    $baseEvent = clone $event;
+    foreach ( $event->event_instances as $instance ) {
+      $baseEvent->event_instances = [ $instance ];
+      $eventObj->event = $baseEvent;
+      $data->events[]  = $eventObj;
+    }
+  }
 }
 
 echo json_encode( $data );
