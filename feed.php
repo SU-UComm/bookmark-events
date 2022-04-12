@@ -29,8 +29,11 @@ foreach ( $event_ids as $event_id ) {
     $data->events[]  = $eventObj;
   }
   else { // recurring event
+    echo json_encode( $event );
     $instances = $event->event_instances;
+    echo json_encode( $instances );
     foreach ( $instances as $instance ) {
+      echo json_encode( $instance );
       $event->event_instances = [ $instance ];
       $eventObj->event = $event;
       $data->events[]  = $eventObj;
