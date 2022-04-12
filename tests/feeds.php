@@ -4,7 +4,7 @@
 namespace Stanford\EventBookmark;
 
 include_once "DB.php";
-include_once "Feed.php";
+include_once "FeedClass.php";
 
 if ( $argc < 2 ) display_help();
 

@@ -2,7 +2,7 @@
 namespace Stanford\EventBookmark;
 
 include_once 'DB.php';
-include_once 'Feed.php';
+include_once 'FeedClass.php';
 include_once 'Localist.php';
 
 ob_start( NULL, 0, PHP_OUTPUT_HANDLER_CLEANABLE | PHP_OUTPUT_HANDLER_FLUSHABLE | PHP_OUTPUT_HANDLER_REMOVABLE );

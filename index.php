@@ -2,7 +2,7 @@
 namespace Stanford\EventBookmark;
 
 include_once 'DB.php';
-include_once 'Feed.php';
+include_once 'FeedClass.php';
 include_once 'Localist.php';
 
 if ( !empty( $_POST ) ) {
