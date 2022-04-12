@@ -29,10 +29,10 @@ foreach ( $event_ids as $event_id ) {
     $data->events[]  = $eventObj;
   }
   else { // recurring event
-    $baseEvent = clone $event;
-    foreach ( $event->event_instances as $instance ) {
-      $baseEvent->event_instances = [ $instance ];
-      $eventObj->event = $baseEvent;
+    $instances = $event->event_instances;
+    foreach ( $instances as $instance ) {
+      $event->event_instances = [ $instance ];
+      $eventObj->event = $event;
       $data->events[]  = $eventObj;
     }
   }
