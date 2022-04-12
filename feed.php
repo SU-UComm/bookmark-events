@@ -17,21 +17,14 @@ $db        = DB::get_instance();
 $localist  = Localist::init( 'staging' ); //// TODO: change to 'live'
 $feeder    = Feed::init( $db );
 $feed      = $feeder->get_feed( $_REQUEST[ 'slug' ] );
-$event_ids =  $feeder->get_feed_events( $feed->id );
+$event_ids = $feeder->get_feed_events( $feed->id );
 
 $data = new \stdClass;
 $data->events = [];
 foreach ( $event_ids as $event_id ) {
-  $event = $localist->get_event( $event_id );  
-  if ( $event->recurring == "true" ) {
-    $baseEvent = clone $event;
-    unset( $baseEvent->event_instances );
-  }
-  else {
-    $eventObj = new \stdClass;
-    $eventObj->event = $event;
-    $data->events[] = $eventObj;
-  }
+  $eventObj        = new \stdClass;
+  $eventObj->event = $localist->get_event( $event_id );  
+  $data->events[]  = $eventObj;
 }
 
 echo json_encode( $data );
