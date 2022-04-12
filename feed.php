@@ -26,17 +26,14 @@ foreach ( $event_ids as $event_id ) {
   $event    = $localist->get_event( $event_id );
   if ( strtolower( $event->recurring != 'true' ) ) { // non-recurring event
     $eventObj->event = $event;
-    $data->events[]  = $eventObj;
+    $data->events[]  = clone $eventObj;
   }
   else { // recurring event
-    echo json_encode( $event );
     $instances = $event->event_instances;
-    echo json_encode( $instances );
     foreach ( $instances as $instance ) {
-      echo json_encode( $instance );
       $event->event_instances = [ $instance ];
-      $eventObj->event = $event;
-      $data->events[]  = $eventObj;
+      $eventObj->event = clone $event;
+      $data->events[]  = clone $eventObj;
     }
   }
 }
