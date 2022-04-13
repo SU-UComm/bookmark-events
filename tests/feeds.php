@@ -10,7 +10,7 @@ if ( $argc < 2 ) display_help();
 
 global $db;
 $db = DB::get_instance();
-$feed = Feed::init( $db );
+$feed = Feeder::init( $db );
 
 for ( $i=1; $i<$argc; $i++ ) {
   $uid = $argv[ $i ];

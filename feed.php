@@ -15,7 +15,7 @@ include_once 'Localist.php';
 
 $db        = DB::get_instance();
 $localist  = Localist::init( 'staging' ); //// TODO: change to 'live'
-$feeder    = Feed::init( $db );
+$feeder    = Feeder::init( $db );
 $feed      = $feeder->get_feed( $_REQUEST[ 'slug' ] );
 $event_ids = $feeder->get_feed_events( $feed->id );
 
