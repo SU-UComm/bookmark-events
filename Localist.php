@@ -9,7 +9,7 @@ class Localist {
 
   private $api_root;
 
-  /** @var Feed $instance - singleton instance of the class **/
+  /** @var Localist $instance - singleton instance of the class **/
   private static $instance;
 
   /** @var string $token - access token to allow authenticated access to Localist */
