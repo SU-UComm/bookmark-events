@@ -4,9 +4,9 @@ namespace Stanford\EventBookmark;
 
 include_once 'DB.php';
 
-class Feed {
+class Feeder {
 
-  /** @var Feed $instance - singleton instance of the class **/
+  /** @var Feeder $instance - singleton instance of the class **/
   private static $instance;
 
   /** @var DB $db - connection to database */
@@ -86,6 +86,22 @@ EOQUERY2;
   }
 
   /***
+   * Get all feeds
+   *
+   * @return array
+   */
+  public function get_feeds() {
+    $query  = "SELECT * FROM localist_bkmk_feed;";
+    $result = $this->db->query( $query, MYSQLI_USE_RESULT );
+    $feeds  = [];
+    while ( $feed = $result->fetch_object() ) {
+      $feeds[ $feed->id ] = $feed->name;
+    }
+    $result->close();
+    return $feeds;
+  }
+
+  /***
    * Get events in a specific feed
    *
    * @param int $feedId - feed id
@@ -116,11 +132,11 @@ EOQUERY;
    * Return singleton instance of the class
    *
    * @param DB $db - connection to database
-   * @return Feed
+   * @return Feeder
    */
   static public function init( DB $db) {
     if ( !is_a( self::$instance, __CLASS__ ) ) {
-      self::$instance = new Feed( $db );
+      self::$instance = new Feeder( $db );
     }
     return self::$instance;
   }
