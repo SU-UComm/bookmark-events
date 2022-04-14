@@ -24,7 +24,7 @@ $data->events = [];
 foreach ( $event_ids as $event_id ) {
   $eventObj = new \stdClass;
   $event    = $localist->get_event( $event_id );
-  if ( strtolower( $event->recurring != 'true' ) ) { // non-recurring event
+  if ( count( $event->event_instances ) > 1 ) { // non-recurring event
     $eventObj->event = $event;
     $data->events[]  = clone $eventObj;
   }
