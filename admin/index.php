@@ -1,10 +1,10 @@
 <?php
 namespace Stanford\EventBookmark;
 
-include_once 'DB.php';
-include_once 'Feeder.php';
-include_once 'Localist.php';
-include_once 'User.php';
+include_once '../DB.php';
+include_once '../Feeder.php';
+include_once '../Localist.php';
+include_once '../User.php';
 
 function debug( array $data ) {
   foreach ( $data as $var => $value ) {
@@ -15,17 +15,20 @@ function debug( array $data ) {
   }
 }
 
-$db     = DB::get_instance();
-$feeder = Feeder::init( $db );
-$feeds  = $feeder->get_feeds();
-$userAPI = User::init( $db );
+$db       = DB::get_instance();
+$feeder   = Feeder::init( $db );
+$feeds    = $feeder->get_feeds();
+$userAPI  = User::init( $db );
+$msgClass = 'success';
 
 if ( !empty( $_POST ) ) {
   switch ( $_POST[ 'submit' ] ) {
     case 'Add user':
       $uid = $_POST[ 'userId' ];
-      if ( $userAPI->user_exists( $uid ) ) {
-        $msg = "User {$uid} already exists.";
+      $user = $userAPI->get_user( $uid );
+      if ( is_object( $user ) ) {
+        $msg = "{$user->name} ({$uid}) already exists.";
+	$msgClass = 'warning';
       }
       else {
         $localist = Localist::init( 'staging' );//// TODO: change to 'live'
@@ -39,13 +42,15 @@ if ( !empty( $_POST ) ) {
             $uid,
             $userName,
             $userSlug
-        );//      $db->query( $query );
+        );
+        $db->query( $query );
         $msg = "Added user {$userName}";
       }
       break;
     case 'Add feed':
       if ( $feeder->feed_exists( $_POST[ 'slug' ] ) ) {
         $msg = "A feed with slug {$_POST[ 'slug' ]} already exists.";
+	$msgClass = 'warning';
       }
       else {
         $query = sprintf(
@@ -53,7 +58,7 @@ if ( !empty( $_POST ) ) {
             $_POST[ 'slug' ],
             $_POST[ 'name' ]
         );
-//      $db->query( $query );
+        $db->query( $query );
         $msg = "Added user {$_POST[ 'name' ]}";
       }
       break;
@@ -61,7 +66,9 @@ if ( !empty( $_POST ) ) {
       $user = $userAPI->get_user( $_POST[ 'userId' ] );
       $userName = $user->name;
       if ( $feeder->user_feed_exists( $_POST[ 'userId' ], $_POST[ 'feedId' ] ) ) {
-        $msg = "{$userName} can already add events to .";
+        $feed = $feeder->get_feed(  $_POST[ 'feedId' ] );
+        $msg = "{$userName} can already add events to {$feed->name} ({$feed->slug}).";
+	$msgClass = 'warning';
       }
       else {
         $query = sprintf(
@@ -69,7 +76,7 @@ if ( !empty( $_POST ) ) {
             $_POST[ 'userId' ],
             $_POST[ 'feedId' ]
         );
-//      $db->query( $query );
+       $db->query( $query );
         $msg = "Added user {$userName} to feed {$feeds[ $_POST[ 'feedId' ] ]}";
       }
       break;
@@ -93,24 +100,24 @@ if ( !empty( $_POST ) ) {
   <meta name="author" content="Stanford Event Calendar" />
   <meta name="description" content="Bookmark Localist events." />
 
-  <?php include '../v5/includes/head.html'; ?>
+  <?php include '../../v5/includes/head.html'; ?>
   <style>
-    input[type="radio"] {
-      margin-bottom: 1em;
-      margin-right:  0.5em;
-    }
     hr {
       margin-top: 1em;
     }
     #message {
-      border: 1px solid black;
+      border: 1px solid green;
       padding: 1em;
+      background-color: white;
+    }
+    #message.warning {
+      border-color: red;
     }
   </style>
 </head>
 
 <body class="content-page">
-<?php include '../v5/includes/header.html'; ?>
+<?php include '../../v5/includes/header.html'; ?>
 
 <!-- main content -->
 <section id="main-content"  role="main">
@@ -118,7 +125,7 @@ if ( !empty( $_POST ) ) {
     <h1>Bookmark Admin</h1>
 
     <?php if ( !empty( $msg ) ) { ?>
-    <section id="message">
+    <section id="message" class="<?php echo $msgClass; ?>">
       <p><?php echo $msg; ?></p>
     </section>
     <?php } ?>
@@ -156,6 +163,7 @@ if ( !empty( $_POST ) ) {
       <input name="submit" type="submit" value="Add user to feed">
     </form>
 
+<!-- --
     <section id="debug">
       <?php
       debug([
@@ -180,12 +188,13 @@ if ( !empty( $_POST ) ) {
       }
       ?>
     </section>
+<!-- -->
 
   </div> <!-- .container -->
 </section> <!-- #main-content -->
 
 <!-- BEGIN footer -->
-<?php include '../v5/includes/footer.html'; ?>
+<?php include '../../v5/includes/footer.html'; ?>
 <!-- END footer -->
 </body>
 </html>

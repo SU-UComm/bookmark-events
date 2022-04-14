@@ -11,7 +11,7 @@ class DB {
   protected $mysqli;
 
   /** @const string CONF_FILE - file name containing DB credentials */
-  const CONF_FILE = './conf.json';
+  const CONF_FILE = 'conf.json';
 
   /** @var string $db_host - RDS host - read from CONF_FILE */
   protected $db_host;
@@ -75,8 +75,10 @@ class DB {
       $this->mysqli = new \mysqli( $this->db_host, $this->db_user, $this->db_pw, $this->db_schema, $this->db_port );
       //printf( "Success: Connected to %s\n", $this->mysqli->host_info );
     } catch ( \Exception $e ) {
+      echo "<code>\n  <pre>\n";
       echo "ERROR: ",  $e->getMessage(),       "\n";
       echo "TRACE:\n", $e->getTraceAsString(), "\n";
+      echo "  </pre>\n</code>\n";
       die();
     }
 
@@ -90,11 +92,13 @@ class DB {
    */
   protected function load_config() {
     try {
-      $config = file_get_contents( self::CONF_FILE );
+      $config = file_get_contents( self::CONF_FILE, TRUE );
     }
     catch ( \Exception $exception ) {
+      echo "<code>\n  <pre>\n";
       echo "ERROR: unable to read file ", self::CONF_FILE;
       echo $exception->getMessage();
+      echo "  </pre>\n</code>\n";
       die();
     }
     $conf = \json_decode( $config );

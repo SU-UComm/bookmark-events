@@ -5,7 +5,7 @@ namespace Stanford\EventBookmark;
 class Localist {
 
   /** @const string CONF_FILE - file name containing DB credentials */
-  const CONF_FILE = './conf.json';
+  const CONF_FILE = 'conf.json';
 
   private $api_root;
 
@@ -90,7 +90,7 @@ class Localist {
    */
   protected function load_config( $env ) {
     try {
-      $config = file_get_contents( self::CONF_FILE );
+      $config = file_get_contents( self::CONF_FILE, TRUE );
     }
     catch ( \Exception $exception ) {
       echo "ERROR: unable to read file ", self::CONF_FILE;
