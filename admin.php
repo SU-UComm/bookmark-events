@@ -4,6 +4,7 @@ namespace Stanford\EventBookmark;
 include_once 'DB.php';
 include_once 'Feeder.php';
 include_once 'Localist.php';
+include_once 'User.php';
 
 function debug( array $data ) {
   foreach ( $data as $var => $value ) {
@@ -17,49 +18,60 @@ function debug( array $data ) {
 $db     = DB::get_instance();
 $feeder = Feeder::init( $db );
 $feeds  = $feeder->get_feeds();
+$userAPI = User::init( $db );
 
 if ( !empty( $_POST ) ) {
   switch ( $_POST[ 'submit' ] ) {
     case 'Add user':
-      $localist = Localist::init( 'staging' ); //// TODO: change to 'live'
-      $user = $localist->get_user(  $_POST[ 'userId' ] );
-      $userName = $user->real_name;
-      $userPath = parse_url( $user->localist_url, PHP_URL_PATH );
-      $pathBits = explode( '/', $userPath );
-      $userSlug = array_pop( $pathBits );
-      $query = sprintf(
-          'INSERT INTO localist_bkmk_user (`id`, `name`, `slug`) VALUES ( %u, \'%s\', \'%s\' );',
-          $_POST[ 'userId' ],
-          $userName,
-          $userSlug
-      );
-//      $db->query( $query );
-      $msg = "Added user {$userName}";
+      $uid = $_POST[ 'userId' ];
+      if ( $userAPI->user_exists( $uid ) ) {
+        $msg = "User {$uid} already exists.";
+      }
+      else {
+        $localist = Localist::init( 'staging' );//// TODO: change to 'live'
+        $user = $localist->get_user( $_POST[ 'userId' ] );
+        $userName = $user->real_name;
+        $userPath = parse_url( $user->localist_url, PHP_URL_PATH );
+        $pathBits = explode( '/', $userPath );
+        $userSlug = array_pop( $pathBits );
+        $query = sprintf(
+            'INSERT INTO localist_bkmk_user (`id`, `name`, `slug`) VALUES ( %u, \'%s\', \'%s\' );',
+            $uid,
+            $userName,
+            $userSlug
+        );//      $db->query( $query );
+        $msg = "Added user {$userName}";
+      }
       break;
     case 'Add feed':
-      $query = sprintf(
-          'INSERT INTO localist_bkmk_feed (`slug`, `name`) VALUES ( \'%s\', \'%s\' );',
-          $_POST[ 'slug' ],
-          $_POST[ 'name' ]
-      );
+      if ( $feeder->feed_exists( $_POST[ 'slug' ] ) ) {
+        $msg = "A feed with slug {$_POST[ 'slug' ]} already exists.";
+      }
+      else {
+        $query = sprintf(
+            'INSERT INTO localist_bkmk_feed (`slug`, `name`) VALUES ( \'%s\', \'%s\' );',
+            $_POST[ 'slug' ],
+            $_POST[ 'name' ]
+        );
 //      $db->query( $query );
-      $msg = "Added user {$_POST[ 'name' ]}";
+        $msg = "Added user {$_POST[ 'name' ]}";
+      }
       break;
     case 'Add user to feed':
-      $query = sprintf(
-          'INSERT INTO localist_bkmk_user_feed (`user_id`, `feed_id`) VALUES ( %u, %u );',
-          $_POST[ 'userId' ],
-          $_POST[ 'feedId' ]
-      );
-//      $db->query( $query );
-      $userQuery = sprintf(
-          'SELECT `name` FROM localist_bkmk_user WHERE `id`=%d;',
-          $_POST[ 'userId' ]
-      );
-      $result = $db->query( $userQuery );
-      $user = $result->fetch_object();
+      $user = $userAPI->get_user( $_POST[ 'userId' ] );
       $userName = $user->name;
-      $msg = "Added user {$userName} to feed {$feeds[ $_POST[ 'feedId' ] ]}";
+      if ( $feeder->user_feed_exists( $_POST[ 'userId' ], $_POST[ 'feedId' ] ) ) {
+        $msg = "{$userName} can already add events to .";
+      }
+      else {
+        $query = sprintf(
+            'INSERT INTO localist_bkmk_user_feed (`user_id`, `feed_id`) VALUES ( %u, %u );',
+            $_POST[ 'userId' ],
+            $_POST[ 'feedId' ]
+        );
+//      $db->query( $query );
+        $msg = "Added user {$userName} to feed {$feeds[ $_POST[ 'feedId' ] ]}";
+      }
       break;
   }
 }

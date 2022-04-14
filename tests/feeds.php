@@ -4,27 +4,42 @@
 namespace Stanford\EventBookmark;
 
 include_once "DB.php";
-include_once "FeedClass.php";
+include_once "Feeder.php";
 
-if ( $argc < 2 ) display_help();
+$opts = getopt( 'f:u:h', [] );
+$fids = isset( $opts[ 'f' ] ) ? $opts[ 'f' ] : '';
+$uids = isset( $opts[ 'u' ] ) ? $opts[ 'u' ] : '';
 
-global $db;
+if ( isset( $opts[ 'h' ] ) ) {
+  display_help();
+}
+echo "You asked for feed(s) {$fids}\n";
+echo "You asked for user(s) {$uids}\n";
+
 $db = DB::get_instance();
-$feed = Feeder::init( $db );
+$feeder = Feeder::init( $db );
 
-for ( $i=1; $i<$argc; $i++ ) {
-  $uid = $argv[ $i ];
-  if ( is_numeric( $uid ) ) {
-    echo "----\nFetching feeds for uid {$uid}\n";
-    $feeds = $feed->get_user_feeds( $uid );
-    print_r( $feeds );
+if ( !empty( $fids ) ) {
+  foreach ( explode( ',', $fids ) as $fid ) {
+    $feed = $feeder->get_feed( $fid );
+    echo "Feed {$fid}:\n";
+    print_r( $feed );
+    echo "\n";
   }
-  else {
-    echo "****\n{$argv[ $i ]} is not a valid user id\n";
+}
+
+if ( !empty( $uids ) ) {
+  foreach ( explode( ',', $uids ) as $uid ) {
+    $feeds = $feeder->get_user_feeds( $uid );
+    echo "Feeds for user {$uid}:\n";
+    print_r( $feeds );
+    echo "\n";
   }
 }
 
 function display_help() {
-  echo "Usage: ./tests/", basename(__FILE__ ), " user_id [user_ids]\n";
-  die;
+  echo "Usage:\n";
+  echo "  -f ids - comma separated list of feed ids to retrieve\n";
+  echo "  -u ids - comma separated list of user ids to retrieve\n";
+  die();
 }

@@ -10,7 +10,7 @@ if ( empty( $_REQUEST[ 'slug' ] ) ) {
 $slug = $_REQUEST[ 'slug' ];
 
 include_once 'DB.php';
-include_once 'FeedClass.php';
+include_once 'Feeder.php';
 include_once 'Localist.php';
 
 $db        = DB::get_instance();

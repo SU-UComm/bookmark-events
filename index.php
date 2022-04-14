@@ -57,7 +57,8 @@ if ( !empty( $_POST ) ) {
       <p>
         You are not yet registered to bookmark events in any feeds. Please
         <a href="http://stanford.io/contact-events-calendar">submit a ticket</a>
-        to request access to bookmarking.
+        to request access to bookmarking. Please indicate in your ticket what
+        feed(s) you'd like to add events to.
       </p>
     <?php } else { ?>
     <p>
@@ -65,16 +66,14 @@ if ( !empty( $_POST ) ) {
     </p>
     <form id="bookmark-form" method="post" action="<?php echo $root; ?>/bookmark.php">
         <input name="eventId" type="hidden" value="<?php echo $_POST[ 'eventId' ]; ?>">
-      <?php if ( $num_feeds == 1 ) { ?>
-	      <input name="feedId" type="radio" value="<?php echo $feeds[0]->feed_id; ?>" checked />&nbsp;&nbsp;<?php echo $feeds[0]->name; ?></br>
-      <?php } elseif ( $num_feeds <= 5 ) { ?>
-        <?php foreach ( $feeds as $theFeed ) { ?>
-	      <input name="feedId" type="radio" value="<?php echo $theFeed->feed_id; ?>" />&nbsp;&nbsp;<?php echo $theFeed->name; ?></br>
+      <?php if ( $num_feeds <= 5 ) { ?>
+        <?php foreach ( $feeds as $fid => $theFeed ) { ?>
+	      <input name="feedId" type="radio" value="<?php echo $fid; ?>" />&nbsp;&nbsp;<?php echo $theFeed; ?></br>
         <?php } ?>
       <?php } else { ?>
         <select name="feedId">
-        <?php foreach ( $feeds as $theFeed ) { ?>
-	        <option value="<?php echo $theFeed->feed_id; ?>"/><?php echo $theFeed->name; ?></option>
+        <?php foreach ( $feeds as $fid => $theFeed ) { ?>
+	        <option value="<?php echo $fid; ?>"/><?php echo $theFeed; ?></option>
         <?php } ?>
 	      </select>
       <?php } ?>
