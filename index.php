@@ -2,17 +2,17 @@
 namespace Stanford\EventBookmark;
 
 include_once 'DB.php';
-include_once 'Feeder.php';
-include_once 'Localist.php';
+include_once 'FeedAPI.php';
+include_once 'LocalistAPI.php';
 
 $root = dirname( $_SERVER[ 'PHP_SELF' ] );
 
 if ( !empty( $_POST ) ) {
   $db        = DB::get_instance();
-  $feeder    = Feeder::init( $db );
-  $feeds     = $feeder->get_user_feeds( $_POST[ 'userId' ] );
+  $feedAPI   = FeedAPI::init( $db );
+  $feeds     = $feedAPI->get_user_feeds( $_POST[ 'userId' ] );
   $num_feeds = count( $feeds );
-  $localist  = Localist::init( 'staging' ); //// TODO: change to 'live'
+  $localist  = LocalistAPI::init( 'staging' ); //// TODO: change to 'live'
   $user      = $localist->get_user(  $_POST[ 'userId'  ] );
   $event     = $localist->get_event( $_POST[ 'eventId' ] );
 }

@@ -4,9 +4,9 @@ namespace Stanford\EventBookmark;
 
 include_once 'DB.php';
 
-class User {
+class UserAPI {
 
-  /** @var User $instance - singleton instance of the class **/
+  /** @var UserAPI $instance - singleton instance of the class **/
   private static $instance;
 
   /** @var DB $db - connection to database */
@@ -51,11 +51,11 @@ class User {
    * Return singleton instance of the class
    *
    * @param DB $db - connection to database
-   * @return User
+   * @return UserAPI
    */
   static public function init( DB $db ) {
     if ( !is_a( self::$instance, __CLASS__ ) ) {
-      self::$instance = new User( $db );
+      self::$instance = new UserAPI( $db );
     }
     return self::$instance;
   }

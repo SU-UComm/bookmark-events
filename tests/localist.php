@@ -18,7 +18,7 @@ if ( isset( $opts[ 'h' ] ) ) {
   die();
 }
 
-$localist = Localist::init( $env );
+$localist = LocalistAPI::init( $env );
 
 switch ( $resource ) {
   case 'user':

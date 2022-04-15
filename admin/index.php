@@ -2,9 +2,9 @@
 namespace Stanford\EventBookmark;
 
 include_once '../DB.php';
-include_once '../Feeder.php';
-include_once '../Localist.php';
-include_once '../User.php';
+include_once '../FeedAPI.php';
+include_once '../LocalistAPI.php';
+include_once '../UserAPI.php';
 
 function debug( array $data ) {
   foreach ( $data as $var => $value ) {
@@ -16,9 +16,9 @@ function debug( array $data ) {
 }
 
 $db       = DB::get_instance();
-$feeder   = Feeder::init( $db );
-$feeds    = $feeder->get_feeds();
-$userAPI  = User::init( $db );
+$feedAPI  = FeedAPI::init( $db );
+$feeds    = $feedAPI->get_feeds();
+$userAPI  = UserAPI::init( $db );
 $msgClass = 'success';
 
 if ( !empty( $_POST ) ) {
@@ -31,8 +31,8 @@ if ( !empty( $_POST ) ) {
 	$msgClass = 'warning';
       }
       else {
-        $localist = Localist::init( 'staging' );//// TODO: change to 'live'
-        $user = $localist->get_user( $_POST[ 'userId' ] );
+        $localist = LocalistAPI::init( 'staging' );//// TODO: change to 'live'
+        $user     = $localist->get_user( $_POST[ 'userId' ] );
         $userName = $user->real_name;
         $userPath = parse_url( $user->localist_url, PHP_URL_PATH );
         $pathBits = explode( '/', $userPath );
@@ -48,7 +48,7 @@ if ( !empty( $_POST ) ) {
       }
       break;
     case 'Add feed':
-      if ( $feeder->feed_exists( $_POST[ 'slug' ] ) ) {
+      if ( $feedAPI->feed_exists( $_POST[ 'slug' ] ) ) {
         $msg = "A feed with slug {$_POST[ 'slug' ]} already exists.";
 	$msgClass = 'warning';
       }
@@ -65,8 +65,8 @@ if ( !empty( $_POST ) ) {
     case 'Add user to feed':
       $user = $userAPI->get_user( $_POST[ 'userId' ] );
       $userName = $user->name;
-      if ( $feeder->user_feed_exists( $_POST[ 'userId' ], $_POST[ 'feedId' ] ) ) {
-        $feed = $feeder->get_feed(  $_POST[ 'feedId' ] );
+      if ( $feedAPI->user_feed_exists( $_POST[ 'userId' ], $_POST[ 'feedId' ] ) ) {
+        $feed = $feedAPI->get_feed(  $_POST[ 'feedId' ] );
         $msg = "{$userName} can already add events to {$feed->name} ({$feed->slug}).";
 	$msgClass = 'warning';
       }
@@ -106,7 +106,7 @@ if ( !empty( $_POST ) ) {
       margin-top: 1em;
     }
     #message {
-      border: 1px solid green;
+      border: 2px solid green;
       padding: 1em;
       background-color: white;
     }

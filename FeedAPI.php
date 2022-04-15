@@ -4,9 +4,9 @@ namespace Stanford\EventBookmark;
 
 include_once 'DB.php';
 
-class Feeder {
+class FeedAPI {
 
-  /** @var Feeder $instance - singleton instance of the class **/
+  /** @var FeedAPI $instance - singleton instance of the class **/
   private static $instance;
 
   /** @var DB $db - connection to database */
@@ -155,11 +155,11 @@ EOQUERY;
    * Return singleton instance of the class
    *
    * @param DB $db - connection to database
-   * @return Feeder
+   * @return FeedAPI
    */
   static public function init( DB $db ) {
     if ( !is_a( self::$instance, __CLASS__ ) ) {
-      self::$instance = new Feeder( $db );
+      self::$instance = new FeedAPI( $db );
     }
     return self::$instance;
   }

@@ -4,7 +4,7 @@
 namespace Stanford\EventBookmark;
 
 include_once "DB.php";
-include_once "Feeder.php";
+include_once "FeedAPI.php";
 
 $opts = getopt( 'f:u:h', [] );
 $fids = isset( $opts[ 'f' ] ) ? $opts[ 'f' ] : '';
@@ -17,11 +17,11 @@ echo "You asked for feed(s) {$fids}\n";
 echo "You asked for user(s) {$uids}\n";
 
 $db = DB::get_instance();
-$feeder = Feeder::init( $db );
+$feedAPI = FeedAPI::init( $db );
 
 if ( !empty( $fids ) ) {
   foreach ( explode( ',', $fids ) as $fid ) {
-    $feed = $feeder->get_feed( $fid );
+    $feed = $feedAPI->get_feed( $fid );
     echo "Feed {$fid}:\n";
     print_r( $feed );
     echo "\n";
@@ -30,7 +30,7 @@ if ( !empty( $fids ) ) {
 
 if ( !empty( $uids ) ) {
   foreach ( explode( ',', $uids ) as $uid ) {
-    $feeds = $feeder->get_user_feeds( $uid );
+    $feeds = $feedAPI->get_user_feeds( $uid );
     echo "Feeds for user {$uid}:\n";
     print_r( $feeds );
     echo "\n";

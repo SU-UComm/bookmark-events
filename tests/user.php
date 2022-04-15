@@ -4,10 +4,10 @@
 namespace Stanford\EventBookmark;
 
 include_once "DB.php";
-include_once "User.php";
+include_once "UserAPI.php";
 
-$opts     = getopt( 'i:h', [] );
-$ids      = isset( $opts[ 'i' ] ) ? $opts[ 'i' ] : '';
+$opts = getopt( 'i:h', [] );
+$uids = isset( $opts[ 'i' ] ) ? $opts[ 'i' ] : '';
 
 if ( isset( $opts[ 'h' ] ) ) {
   echo "Usage:\n";
@@ -16,13 +16,13 @@ if ( isset( $opts[ 'h' ] ) ) {
 }
 
 $db = DB::get_instance();
-$userAPI = User::init( $db );
+$userAPI = UserAPI::init( $db );
 
-if ( empty( $ids ) ) {
+if ( empty( $uids ) ) {
   echo "Please specify at least one Localist user id.\n";
   die();
 }
-foreach ( explode( ',', $ids ) as $id ) {
+foreach ( explode( ',', $uids ) as $id ) {
   $user = $userAPI->get_user( $id );
   if ( is_object( $user ) ) {
     print_r( $user );
