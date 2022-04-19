@@ -1,4 +1,3 @@
 AuthType shibboleth
 ShibRequestSetting requireSession true
-Require shib-attr entitlement ucomm:admins
-Require user jbchrsty daveku jrent 
+Require shib-attr entitlement ucomm:event-admins
