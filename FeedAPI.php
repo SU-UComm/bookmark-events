@@ -42,7 +42,7 @@ EOQUERY;
     $result = $this->db->query( $query, MYSQLI_USE_RESULT );
     $feeds = [];
     while ( $feed = $result->fetch_object() ) {
-      $feeds[ $feed->feed_id ] = "{$feed->name} ({$feed->slug})";
+      $feeds[ $feed->feed_id ] = $feed;
     }
     $result->close();
     return $feeds;
@@ -118,7 +118,7 @@ EOQUERY2;
     $result = $this->db->query( $query, MYSQLI_USE_RESULT );
     $feeds  = [];
     while ( $feed = $result->fetch_object() ) {
-      $feeds[ $feed->id ] = "{$feed->name} ({$feed->slug})";
+      $feeds[ $feed->id ] = $feed;
     }
     $result->close();
     return $feeds;

@@ -68,16 +68,21 @@ if ( !empty( $_POST ) ) {
         <input name="eventId" type="hidden" value="<?php echo $_POST[ 'eventId' ]; ?>">
       <?php if ( $num_feeds <= 5 ) { ?>
         <?php foreach ( $feeds as $fid => $theFeed ) { ?>
-	      <input name="feedId" type="radio" value="<?php echo $fid; ?>" />&nbsp;&nbsp;<?php echo $theFeed; ?></br>
+          <input name="feedId" type="radio" value="<?php echo $fid; ?>" />&nbsp;
+          <a href="<?php echo $root; ?>/feed.php?slug=<?php echo $theFeed->slug; ?>">
+            <?php echo $theFeed->name, ' (', $theFeed->slug, ')'; ?>
+          </a></br>
         <?php } ?>
       <?php } else { ?>
-        <select name="feedId">
+      <select name="feedId">
         <?php foreach ( $feeds as $fid => $theFeed ) { ?>
-	        <option value="<?php echo $fid; ?>"/><?php echo $theFeed; ?></option>
+          <option value="<?php echo $fid; ?>"/>
+            <?php echo $theFeed->name, ' (', $theFeed->slug, ')'; ?>
+          </option>
         <?php } ?>
-	      </select>
+      </select>
       <?php } ?>
-      <input type="submit" value="Submit">
+      <input type="submit" value="Add to selected feed">
     </form>
     <?php } ?>
 <?php } else { ?>
