@@ -50,7 +50,7 @@ if ( !empty( $_POST ) ) {
     case 'Add feed':
       if ( $feedAPI->feed_exists( $_POST[ 'slug' ] ) ) {
         $msg = "A feed with slug {$_POST[ 'slug' ]} already exists.";
-	$msgClass = 'warning';
+        $msgClass = 'warning';
       }
       else {
         $query = sprintf(
@@ -63,21 +63,24 @@ if ( !empty( $_POST ) ) {
       }
       break;
     case 'Add user to feed':
-      $user = $userAPI->get_user( $_POST[ 'userId' ] );
+      $uid      = $_POST[ 'userId' ];
+      $fid      = $_POST[ 'feedId' ];
+      $user     = $userAPI->get_user( $uid );
       $userName = $user->name;
-      if ( $feedAPI->user_feed_exists( $_POST[ 'userId' ], $_POST[ 'feedId' ] ) ) {
-        $feed = $feedAPI->get_feed(  $_POST[ 'feedId' ] );
-        $msg = "{$userName} can already add events to {$feed->name} ({$feed->slug}).";
-	$msgClass = 'warning';
+      if ( $feedAPI->user_feed_exists( $uid, $fid ) ) {
+        $feed = $feedAPI->get_feed( $fid );
+        $msg  = "{$userName} can already add events to {$feed->name} ({$feed->slug}).";
+        $msgClass = 'warning';
       }
       else {
         $query = sprintf(
             'INSERT INTO localist_bkmk_user_feed (`user_id`, `feed_id`) VALUES ( %u, %u );',
-            $_POST[ 'userId' ],
-            $_POST[ 'feedId' ]
+            $uid,
+            $fid
         );
-       $db->query( $query );
-        $msg = "Added user {$userName} to feed {$feeds[ $_POST[ 'feedId' ] ]}";
+        $db->query( $query );
+        $msg  = "Added {$userName} to feed ";
+        $msg .= $feeds[ $fid ]->name . ' (' . $feeds[ $fid ]->slug . ')';
       }
       break;
   }
@@ -92,7 +95,7 @@ if ( !empty( $_POST ) ) {
 <!--<![endif]-->
 
 <head>
-  <title>Bookmark | Stanford Event Calendar</title>
+  <title>Bookmark Admin | Stanford Event Calendar</title>
 
   <!-- Meta -->
   <meta charset="utf-8" />
@@ -112,6 +115,9 @@ if ( !empty( $_POST ) ) {
     }
     #message.warning {
       border-color: red;
+    }
+    select {
+      margin-bottom: 1em;
     }
   </style>
 </head>
@@ -156,8 +162,8 @@ if ( !empty( $_POST ) ) {
       <input name="userId" type="text" width="15" /><br/>
       <label for="feedId">Feed:</label>
       <select name="feedId">
-        <?php foreach ( $feeds as $id => $name ) { ?>
-          <option value="<?php echo $id; ?>"/><?php echo $name; ?></option>
+        <?php foreach ( $feeds as $id => $feed ) { ?>
+          <option value="<?php echo $id; ?>"/><?php echo $feed->name, ' (', $feed->slug, ')'; ?></option>
         <?php } ?>
       </select>
       <input name="submit" type="submit" value="Add user to feed">
@@ -165,6 +171,7 @@ if ( !empty( $_POST ) ) {
 
 <!-- --
     <section id="debug">
+      <h2>Debug</h2>
       <?php
       debug([
         '$feeds' => $feeds
