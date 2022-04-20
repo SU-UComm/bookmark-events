@@ -2,14 +2,14 @@
 
 namespace Stanford\EventBookmark;
 
-class Localist {
+class LocalistAPI {
 
   /** @const string CONF_FILE - file name containing DB credentials */
-  const CONF_FILE = './conf.json';
+  const CONF_FILE = 'conf.json';
 
   private $api_root;
 
-  /** @var Feed $instance - singleton instance of the class **/
+  /** @var LocalistAPI $instance - singleton instance of the class **/
   private static $instance;
 
   /** @var string $token - access token to allow authenticated access to Localist */
@@ -60,11 +60,11 @@ class Localist {
    * Initialize singleton instance
    *
    * @param string $env - 'live' or 'staging'
-   * @return Localist singleton instance
+   * @return LocalistAPI singleton instance
    */
   public static function init( string $env = 'live' ) {
     if ( !is_a( self::$instance, __CLASS__ ) ) {
-      self::$instance = new Localist( $env );
+      self::$instance = new LocalistAPI( $env );
     }
     return self::$instance;
   }
@@ -90,7 +90,7 @@ class Localist {
    */
   protected function load_config( $env ) {
     try {
-      $config = file_get_contents( self::CONF_FILE );
+      $config = file_get_contents( self::CONF_FILE, TRUE );
     }
     catch ( \Exception $exception ) {
       echo "ERROR: unable to read file ", self::CONF_FILE;

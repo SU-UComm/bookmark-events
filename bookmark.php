@@ -2,17 +2,19 @@
 namespace Stanford\EventBookmark;
 
 include_once 'DB.php';
-include_once 'FeedClass.php';
-include_once 'Localist.php';
+include_once 'FeedAPI.php';
+include_once 'LocalistAPI.php';
+
+$root = dirname( $_SERVER[ 'PHP_SELF' ] );
 
 ob_start( NULL, 0, PHP_OUTPUT_HANDLER_CLEANABLE | PHP_OUTPUT_HANDLER_FLUSHABLE | PHP_OUTPUT_HANDLER_REMOVABLE );
 if ( !empty( $_POST ) ) {
   $db        = DB::get_instance();
-  $localist  = Localist::init( 'staging' ); //// TODO: change to 'live'
+  $localist  = LocalistAPI::init( 'staging' ); //// TODO: change to 'live'
   $event     = $localist->get_event( $_POST[ 'eventId' ] );
-  $feeder    = Feed::init( $db );
-  $feed      = $feeder->get_feed( $_POST[ 'feedId' ] );
-  $added     = $feeder->add_event_to_feed( $_POST[ 'eventId' ], $_POST[ 'feedId' ] );
+  $feedAPI   = FeedAPI::init( $db );
+  $feed      = $feedAPI->get_feed( $_POST[ 'feedId' ] );
+  $added     = $feedAPI->add_event_to_feed( $_POST[ 'eventId' ], $_POST[ 'feedId' ] );
 }
 $debug = ob_get_contents();
 ob_end_clean();
@@ -53,7 +55,7 @@ ob_end_clean();
       <?php } ?>
     </p>
     <p>
-      <a href="/bookmark/feed.php?slug=<?php echo $feed->slug; ?>">View the feed.</a>
+      <a href="<?php echo $root; ?>/feed.php?slug=<?php echo $feed->slug; ?>">View the feed.</a>
     </p>
     <section id="debug">
       <code>

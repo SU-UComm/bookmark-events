@@ -2,15 +2,17 @@
 namespace Stanford\EventBookmark;
 
 include_once 'DB.php';
-include_once 'FeedClass.php';
-include_once 'Localist.php';
+include_once 'FeedAPI.php';
+include_once 'LocalistAPI.php';
+
+$root = dirname( $_SERVER[ 'PHP_SELF' ] );
 
 if ( !empty( $_POST ) ) {
   $db        = DB::get_instance();
-  $feed      = Feed::init( $db );
-  $feeds     = $feed->get_user_feeds( $_POST[ 'userId' ] );
+  $feedAPI   = FeedAPI::init( $db );
+  $feeds     = $feedAPI->get_user_feeds( $_POST[ 'userId' ] );
   $num_feeds = count( $feeds );
-  $localist  = Localist::init( 'staging' ); //// TODO: change to 'live'
+  $localist  = LocalistAPI::init( 'staging' ); //// TODO: change to 'live'
   $user      = $localist->get_user(  $_POST[ 'userId'  ] );
   $event     = $localist->get_event( $_POST[ 'eventId' ] );
 }
@@ -50,66 +52,45 @@ if ( !empty( $_POST ) ) {
     <h1>Bookmark a Localist event</h1>
 
 <?php if ( !empty( $_POST ) ) { ?>
-<!-- --
-    <h2>$_POST</h2>
-    <code>
-      <pre>
-        <?php print_r( $_POST ); ?>
-      </pre>
-    </code>
-<!-- -->
-<!-- --
-    <h2>$feeds</h2>
-    <code>
-      <pre>
-        <?php print_r( $feeds ); ?>
-      </pre>
-    </code>
-<!-- -->
-<!-- --
-<h2>$user</h2>
-    <code>
-      <pre>
-        <?php echo htmlentities(  print_r( $user, TRUE ) ); ?>
-      </pre>
-    </code>
-<-- -->
-<!-- --
-    <h2>$event</h2>
-    <code>
-      <pre>
-        <?php echo htmlentities(  print_r( $event, TRUE ) ); ?>
-      </pre>
-    </code>
-<!-- -->
-
     <h2>Add to feed</h2>
+    <?php if ( $num_feeds == 0 ) { ?>
+      <p>
+        You are not yet registered to bookmark events in any feeds. Please
+        <a href="http://stanford.io/contact-events-calendar">submit a ticket</a>
+        to request access to bookmarking. Please indicate in your ticket what
+        feed(s) you'd like to add events to.
+      </p>
+    <?php } else { ?>
     <p>
       Add <a href="<?php echo $event->localist_url; ?>"><?php echo $event->title; ?></a> to:
     </p>
-    <form id="bookmark-form" method="post" action="/bookmark/bookmark.php">
-      <input name="eventId" type="hidden" value="<?php echo $_POST[ 'eventId' ]; ?>">
-      <?php if ( $num_feeds <= 1 ) { ?>
-	<input name="feedId" type="radio" value="<?php echo $feeds[0]->feed_id; ?>" checked />&nbsp;&nbsp;<?php echo $feeds[0]->name; ?></br>
-      <?php } elseif ( $num_feeds <= 5 ) { ?>
-        <?php foreach ( $feeds as $feed ) { ?>
-	  <input name="feedId" type="radio" value="<?php echo $feed->feed_id; ?>" />&nbsp;&nbsp;<?php echo $feed->name; ?></br>
+    <form id="bookmark-form" method="post" action="<?php echo $root; ?>/bookmark.php">
+        <input name="eventId" type="hidden" value="<?php echo $_POST[ 'eventId' ]; ?>">
+      <?php if ( $num_feeds <= 5 ) { ?>
+        <?php foreach ( $feeds as $fid => $theFeed ) { ?>
+          <input name="feedId" type="radio" value="<?php echo $fid; ?>" />&nbsp;
+          <a href="<?php echo $root; ?>/feed.php?slug=<?php echo $theFeed->slug; ?>">
+            <?php echo $theFeed->name, ' (', $theFeed->slug, ')'; ?>
+          </a></br>
         <?php } ?>
       <?php } else { ?>
-        <select name="feed">
-        <?php foreach ( $feeds as $feed ) { ?>
-	  <option value="<?php echo $feed->feed_id; ?>"/><?php echo $feed->name; ?></option>
+      <select name="feedId">
+        <?php foreach ( $feeds as $fid => $theFeed ) { ?>
+          <option value="<?php echo $fid; ?>"/>
+            <?php echo $theFeed->name, ' (', $theFeed->slug, ')'; ?>
+          </option>
         <?php } ?>
-	</select>
+      </select>
       <?php } ?>
-      <input type="submit" value="Submit">
+      <input type="submit" value="Add to selected feed">
     </form>
+    <?php } ?>
 <?php } else { ?>
     <form id="test-form" method="post">
       <label for="userId">User id:</label>
-      <input id="userId" type="number" width="15" /><br/>
+      <input name="userId" type="text" width="15" /><br/>
       <label for="eventId">Event id:</label>
-      <input id="eventId" type="number" width="15" /><br/>
+      <input name="eventId" type="text" width="15" /><br/>
       <input type="submit" value="Bookmark this event">
     </form>
 <?php } ?>

@@ -4,14 +4,26 @@ namespace Stanford\EventBookmark;
 
 include_once 'DB.php';
 
-class Feed {
+class FeedAPI {
 
-  /** @var Feed $instance - singleton instance of the class **/
+  /** @var FeedAPI $instance - singleton instance of the class **/
   private static $instance;
 
   /** @var DB $db - connection to database */
   protected $db;
 
+
+  /***
+   * Determine if user is allowed to add events to specified feed
+   *
+   * @param int $uid - Localist user id
+   * @param int $fid - feed id
+   * @return bool
+   */
+  public function user_feed_exists( $uid, $fid ) {
+    $feeds = $this->get_user_feeds( $uid );
+    return isset( $feeds[ $fid ] );
+  }
 
   /***
    * Get feeds a user is allowed to add events to
@@ -30,7 +42,7 @@ EOQUERY;
     $result = $this->db->query( $query, MYSQLI_USE_RESULT );
     $feeds = [];
     while ( $feed = $result->fetch_object() ) {
-      $feeds[] = $feed;
+      $feeds[ $feed->feed_id ] = $feed;
     }
     $result->close();
     return $feeds;
@@ -67,6 +79,17 @@ EOQUERY2;
   }
 
   /***
+   * Determine if a feed with the specified slug already exists
+   *
+   * @param string $slug
+   * @return bool
+   */
+  public function feed_exists( $slug ) {
+    $feed = $this->get_feed( $slug );
+    return is_object( $feed );
+  }
+
+  /***
    * Get details about a specific feed
    *
    * @param int | string $feed - feed id (int) or slug (string)
@@ -83,6 +106,22 @@ EOQUERY2;
     $feed = $result->fetch_object();
     $result->close();
     return $feed;
+  }
+
+  /***
+   * Get all feeds
+   *
+   * @return array
+   */
+  public function get_feeds() {
+    $query  = "SELECT * FROM localist_bkmk_feed ORDER BY `name` ASC;";
+    $result = $this->db->query( $query, MYSQLI_USE_RESULT );
+    $feeds  = [];
+    while ( $feed = $result->fetch_object() ) {
+      $feeds[ $feed->id ] = $feed;
+    }
+    $result->close();
+    return $feeds;
   }
 
   /***
@@ -116,11 +155,11 @@ EOQUERY;
    * Return singleton instance of the class
    *
    * @param DB $db - connection to database
-   * @return Feed
+   * @return FeedAPI
    */
-  static public function init( DB $db) {
+  static public function init( DB $db ) {
     if ( !is_a( self::$instance, __CLASS__ ) ) {
-      self::$instance = new Feed( $db );
+      self::$instance = new FeedAPI( $db );
     }
     return self::$instance;
   }
