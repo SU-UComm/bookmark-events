@@ -67,8 +67,9 @@ if ( !empty( $_POST ) ) {
     <form id="bookmark-form" method="post" action="<?php echo $root; ?>/bookmark.php">
         <input name="eventId" type="hidden" value="<?php echo $_POST[ 'eventId' ]; ?>">
       <?php if ( $num_feeds <= 5 ) { ?>
+        <?php $checked = ( $num_feeds == 1 ) ? 'checked="checked"' : ''; ?>
         <?php foreach ( $feeds as $fid => $theFeed ) { ?>
-          <input name="feedId" type="radio" value="<?php echo $fid; ?>" />&nbsp;
+          <input name="feedId" type="radio" value="<?php echo $fid; ?>" <?php echo $checked; ?> />&nbsp;
           <a href="<?php echo $root; ?>/feed.php?slug=<?php echo $theFeed->slug; ?>">
             <?php echo $theFeed->name, ' (', $theFeed->slug, ')'; ?>
           </a></br>

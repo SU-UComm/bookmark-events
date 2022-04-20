@@ -44,7 +44,7 @@ if ( !empty( $_POST ) ) {
             $userSlug
         );
         $db->query( $query );
-        $msg = "Added user {$userName}";
+        $msg = "Added user {$userName}.";
       }
       break;
     case 'Add feed':
@@ -59,7 +59,7 @@ if ( !empty( $_POST ) ) {
             $_POST[ 'name' ]
         );
         $db->query( $query );
-        $msg = "Added user {$_POST[ 'name' ]}";
+        $msg = "Added feed {$_POST[ 'name' ]}.";
       }
       break;
     case 'Add user to feed':
@@ -79,8 +79,7 @@ if ( !empty( $_POST ) ) {
             $fid
         );
         $db->query( $query );
-        $msg  = "Added {$userName} to feed ";
-        $msg .= $feeds[ $fid ]->name . ' (' . $feeds[ $fid ]->slug . ')';
+        $msg = "Added {$userName} to feed " . $feeds[ $fid ]->name . ' (' . $feeds[ $fid ]->slug . ').';
       }
       break;
   }
@@ -174,7 +173,8 @@ if ( !empty( $_POST ) ) {
       <h2>Debug</h2>
       <?php
       debug([
-        '$feeds' => $feeds
+        '$feeds' => $feeds,
+	'$localist' => $localist
       ]);
       if ( !empty( $query ) ) {
         debug ([
@@ -190,7 +190,8 @@ if ( !empty( $_POST ) ) {
       if ( !empty( $_POST ) ) {
         debug( [
           '$_POST' => $_POST,
-          '$user' => $user
+          '$user' => $user,
+          '$userName' => $userName
         ] );
       }
       ?>

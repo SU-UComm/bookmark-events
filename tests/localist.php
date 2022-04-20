@@ -3,16 +3,16 @@
 
 namespace Stanford\EventBookmark;
 
-include_once "Localist.php";
+include_once "LocalistAPI.php";
 
 $opts     = getopt( 'e:r:i:h', [] );
-$env      = isset( $opts[ 'e' ] ) ? $opts[ 'e' ] : 'staging';
+$env      = isset( $opts[ 'e' ] ) ? $opts[ 'e' ] : 'live';
 $resource = isset( $opts[ 'r' ] ) ? $opts[ 'r' ] : 'user';
 $ids      = isset( $opts[ 'i' ] ) ? $opts[ 'i' ] : '';
 
 if ( isset( $opts[ 'h' ] ) ) {
   echo "Usage:\n";
-  echo "  -e environment - 'live' or 'staging'. Defaults to staging.\n";
+  echo "  -e environment - 'live' or 'staging'. Defaults to live.\n";
   echo "  -r resource - what resource to retrieve from Localist, e.g. user, event, department, place. Defaults to user.\n";
   echo "  -i ids - comma separated list of specific ids to retrieve. If not specified, gets the first 10.\n";
   die();

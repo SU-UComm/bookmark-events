@@ -48,15 +48,10 @@ ob_end_clean();
     <h1>Event bookmarked</h1>
     <p>
       <a href="<?php echo $event->localist_url; ?>"><?php echo $event->title; ?></a>
-      <?php if ( $added ) { ?>
-      has been added to <?php echo $feed->name; ?>.
-      <?php } else { ?>
-      is already in <?php echo $feed->name; ?>.
-      <?php } ?>
+      <?php echo ( $added ) ? ' has been added to ' : ' is already in '; ?>
+      <a href="<?php echo $root; ?>/feed.php?slug=<?php echo $feed->slug; ?>"><?php echo $feed->name; ?>.</a>
     </p>
-    <p>
-      <a href="<?php echo $root; ?>/feed.php?slug=<?php echo $feed->slug; ?>">View the feed.</a>
-    </p>
+    <?php if ( !empty( $debug ) ) { ?>
     <section id="debug">
       <code>
         <pre>
@@ -64,6 +59,7 @@ ob_end_clean();
 	</pre>
       </code>
     </section>
+    <?php } ?>
   </div>
 </section>
 
