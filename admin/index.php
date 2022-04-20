@@ -31,7 +31,7 @@ if ( !empty( $_POST ) ) {
 	$msgClass = 'warning';
       }
       else {
-        $localist = LocalistAPI::init( 'staging' );//// TODO: change to 'live'
+        $localist = LocalistAPI::init( 'live' );
         $user     = $localist->get_user( $_POST[ 'userId' ] );
         $userName = $user->real_name;
         $userPath = parse_url( $user->localist_url, PHP_URL_PATH );

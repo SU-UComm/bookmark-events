@@ -14,7 +14,7 @@ include_once 'FeedAPI.php';
 include_once 'LocalistAPI.php';
 
 $db        = DB::get_instance();
-$localist  = LocalistAPI::init( 'staging' ); //// TODO: change to 'live'
+$localist  = LocalistAPI::init( 'live' );
 $feedAPI   = FeedAPI::init( $db );
 $feed      = $feedAPI->get_feed( $_REQUEST[ 'slug' ] );
 $event_ids = $feedAPI->get_feed_events( $feed->id );

@@ -12,7 +12,7 @@ if ( !empty( $_POST ) ) {
   $feedAPI   = FeedAPI::init( $db );
   $feeds     = $feedAPI->get_user_feeds( $_POST[ 'userId' ] );
   $num_feeds = count( $feeds );
-  $localist  = LocalistAPI::init( 'staging' ); //// TODO: change to 'live'
+  $localist  = LocalistAPI::init( 'live' );
   $user      = $localist->get_user(  $_POST[ 'userId'  ] );
   $event     = $localist->get_event( $_POST[ 'eventId' ] );
 }

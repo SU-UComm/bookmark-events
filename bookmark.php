@@ -10,7 +10,7 @@ $root = dirname( $_SERVER[ 'PHP_SELF' ] );
 ob_start( NULL, 0, PHP_OUTPUT_HANDLER_CLEANABLE | PHP_OUTPUT_HANDLER_FLUSHABLE | PHP_OUTPUT_HANDLER_REMOVABLE );
 if ( !empty( $_POST ) ) {
   $db        = DB::get_instance();
-  $localist  = LocalistAPI::init( 'staging' ); //// TODO: change to 'live'
+  $localist  = LocalistAPI::init( 'live' );
   $event     = $localist->get_event( $_POST[ 'eventId' ] );
   $feedAPI   = FeedAPI::init( $db );
   $feed      = $feedAPI->get_feed( $_POST[ 'feedId' ] );
