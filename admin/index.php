@@ -102,7 +102,7 @@ if ( !empty( $_POST ) ) {
   <meta name="author" content="Stanford Event Calendar" />
   <meta name="description" content="Bookmark Localist events." />
 
-  <?php include '../../v5/includes/head.html'; ?>
+  <?php include '../includes/head.html'; ?>
   <style>
     hr {
       margin-top: 1em;
@@ -121,11 +121,11 @@ if ( !empty( $_POST ) ) {
   </style>
 </head>
 
-<body class="content-page">
-<?php include '../../v5/includes/header.html'; ?>
+<body class="su-content-page su-bookmark-page">
+<?php include '../includes/header.html'; ?>
 
 <!-- main content -->
-<section id="main-content"  role="main">
+<section id="main-content" role="main">
   <div class="container">
     <h1>Bookmark Admin</h1>
 
@@ -202,7 +202,7 @@ if ( !empty( $_POST ) ) {
 </section> <!-- #main-content -->
 
 <!-- BEGIN footer -->
-<?php include '../../v5/includes/footer.html'; ?>
+<?php include '../includes/footer.html'; ?>
 <!-- END footer -->
 </body>
 </html>
