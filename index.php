@@ -37,8 +37,14 @@ if ( !empty( $_POST ) ) {
     <?php include './includes/head.html'; ?>
     <style>
       input[type="radio"] {
+        width: 1em;
+        height: 1em;
+        display: inline-block;
         margin-bottom: 1em;
-        margin-right:  0.5em;
+        margin-right: 0.5em;
+      }
+      input[type="submit"] {
+        margin-top: 0.5em;
       }
     </style>
   </head>
@@ -52,7 +58,7 @@ if ( !empty( $_POST ) ) {
         <h1>Bookmark a Localist event</h1>
 
     <?php if ( !empty( $_POST ) ) { ?>
-        <h2>Add to feed</h2>
+        <h2>Add to custom feed</h2>
         <?php if ( $num_feeds == 0 ) { ?>
           <p>
             You are not yet registered to bookmark events in any feeds. Please
@@ -70,9 +76,8 @@ if ( !empty( $_POST ) ) {
             <?php $checked = ( $num_feeds == 1 ) ? 'checked="checked"' : ''; ?>
             <?php foreach ( $feeds as $fid => $theFeed ) { ?>
               <input name="feedId" type="radio" value="<?php echo $fid; ?>" <?php echo $checked; ?> />&nbsp;
-              <a href="<?php echo $root; ?>/feed.php?slug=<?php echo $theFeed->slug; ?>">
-                <?php echo $theFeed->name, ' (', $theFeed->slug, ')'; ?>
-              </a></br>
+              <?php echo $theFeed->name, ' (', $theFeed->slug, ')'; ?>
+              </br>
             <?php } ?>
           <?php } else { ?>
           <select name="feedId">
