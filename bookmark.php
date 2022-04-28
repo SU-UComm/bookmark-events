@@ -36,14 +36,14 @@ ob_end_clean();
   <meta name="author" content="Stanford Event Calendar" />
   <meta name="description" content="Bookmark Localist events." />
 
-  <?php include '../v5/includes/head.html'; ?>
+  <?php include './includes/head.html'; ?>
 </head>
 
-<body class="content-page">
-<?php include '../v5/includes/header.html'; ?>
+<body class="su-content-page su-bookmark-page">
+<?php include './includes/header.html'; ?>
 
 <!-- main content -->
-<section id="main-content"  role="main">
+<main id="main-content"  role="main">
   <div class="container">
     <h1>Event bookmarked</h1>
     <p>
@@ -61,10 +61,10 @@ ob_end_clean();
     </section>
     <?php } ?>
   </div>
-</section>
+</main>
 
 <!-- BEGIN footer -->
-<?php include '../v5/includes/footer.html'; ?>
+<?php include './includes/footer.html'; ?>
 <!-- END footer -->
 </body>
 </html>
