@@ -3,6 +3,7 @@
 namespace Stanford\EventBookmark;
 
 include_once 'DB.php';
+include_once 'LocalistAPI.php';
 
 class FeedAPI {
 
@@ -11,6 +12,9 @@ class FeedAPI {
 
   /** @var DB $db - connection to database */
   protected $db;
+
+  /** @var LocalistAPI $localist - connection to Localist */
+  protected $localist;
 
 
   /***
@@ -69,10 +73,20 @@ EOQUERY1;
       return FALSE;
     }
 
+    // fetch the event from Localist
+    $event = $this->localist->get_event( $eventId );
+    if ( $event === FALSE ) {
+      // if the event doesn't exist, bail
+      return FALSE;
+    }
+
+    // add the event to the feed
+    $instances = count( $event->event_instances );
+    $last_date = $event->last_date;
     $query2 = <<<EOQUERY2
 INSERT INTO localist_bkmk_feed_events
-  ( feed_id, event_id )
-  VALUES ( {$feedId}, {$eventId} );
+  ( feed_id, event_id, instances, last_date )
+  VALUES ( {$feedId}, {$eventId}, {$instances}, {$last_date} );
 EOQUERY2;
     $result2 = $this->db->query( $query2, MYSQLI_USE_RESULT );
     return TRUE;
@@ -131,11 +145,13 @@ EOQUERY2;
    * @return stdClass - feed
    */
   public function get_feed_events( $feedId ) {
-
+    $feedId = intval( $feedId );
     $query = <<<EOQUERY
 SELECT fe.*
   FROM localist_bkmk_feed_events AS fe
-  WHERE fe.feed_id = '{$feedId}';
+  WHERE fe.feed_id = {$feedId}
+  AND   fe.last_date >= CURDATE()
+  ;
 EOQUERY;
 
     $result = $this->db->query( $query, MYSQLI_USE_RESULT );
@@ -168,13 +184,21 @@ EOQUERY;
    * Build the singleton instance of the class.
    *
    * @param DB $db - connection to database
+   * @param LocalistAPI $localist - connection to Localist
    */
-  private function __construct( $db = NULL ) {
+  private function __construct( $db = NULL, $localist = NULL ) {
     if ( is_a( $db, 'DB' ) ) {
       $this->db = $db;
     }
     else {
       $this->db = DB::get_instance();
+    }
+
+    if ( is_a( $localist, 'LocalistAPI' ) ) {
+      $this->localist = $localist;
+    }
+    else {
+      $this->localist = LocalistAPI::init();
     }
   }
 }
