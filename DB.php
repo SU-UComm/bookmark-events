@@ -43,6 +43,10 @@ class DB {
     }
   }
 
+  public function query_info() {
+    return $this->mysqli->info;
+  }
+
   /***********************/
   /***** Class Setup *****/
   /***********************/
