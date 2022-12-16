@@ -26,7 +26,7 @@ class LocalistAPI {
     return isset( $result->event ) ? $result->event : FALSE;
   }
 
-  public function auth_api_call( $request, $params = '' ) {
+  public function auth_api_call( $request, $params = [] ) {
     $url = $this->api_root . $request;
     if ( !empty( $params ) ) {
       $url .= '?' . http_build_query( $params );
