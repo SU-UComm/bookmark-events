@@ -86,7 +86,7 @@ EOQUERY1;
     $query2 = <<<EOQUERY2
 INSERT INTO localist_bkmk_feed_events
   ( feed_id, event_id, instances, last_date )
-  VALUES ( {$feedId}, {$eventId}, {$instances}, {$last_date} );
+  VALUES ( {$feedId}, {$eventId}, {$instances}, '{$last_date}' );
 EOQUERY2;
     $result2 = $this->db->query( $query2, MYSQLI_USE_RESULT );
     return TRUE;
