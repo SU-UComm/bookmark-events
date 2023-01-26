@@ -8,6 +8,7 @@ if ( empty( $_REQUEST[ 'slug' ] ) ) {
   die();
 }
 $slug = $_REQUEST[ 'slug' ];
+$all  = array_key_exists( "all", $_REQUEST ) ? TRUE : FALSE;
 
 include_once 'DB.php';
 include_once 'FeedAPI.php';
@@ -17,7 +18,7 @@ $db        = DB::get_instance();
 $localist  = LocalistAPI::init( 'live' );
 $feedAPI   = FeedAPI::init( $db );
 $feed      = $feedAPI->get_feed( $_REQUEST[ 'slug' ] );
-$event_ids = $feedAPI->get_feed_events( $feed->id );
+$event_ids = $feedAPI->get_feed_events( $feed->id, $all );
 
 $data = new \stdClass;
 $data->events = [];

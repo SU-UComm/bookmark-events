@@ -141,18 +141,18 @@ EOQUERY2;
   /***
    * Get events in a specific feed
    *
-   * @param int $feedId - feed id
+   * @param int  $feedId      - feed id
+   * @param bool $includePast - TRUE to include past events
    * @return stdClass - feed
    */
-  public function get_feed_events( $feedId ) {
+  public function get_feed_events( $feedId, $includePast=FALSE ) {
     $feedId = intval( $feedId );
     $query = <<<EOQUERY
 SELECT fe.*
   FROM localist_bkmk_feed_events AS fe
   WHERE fe.feed_id = {$feedId}
-  AND   fe.last_date >= CURDATE()
-  ;
 EOQUERY;
+    $query .= $includePast ? ";" : "\n  AND   fe.last_date >= CURDATE();";
 
     $result = $this->db->query( $query, MYSQLI_USE_RESULT );
 
